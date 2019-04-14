@@ -1,0 +1,298 @@
+{
+	"info": {
+		"_postman_id": "5280bf96-49da-422a-9a78-45cea295fb95",
+		"name": "Oauth_test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get_oauth_data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bfbe9cca-6fd5-46de-8c3c-d5cf1ceec28d",
+						"exec": [
+							"let CookieA = pm.environment.get(\"CookieA\");\r",
+							"let Setcookie = postman.getResponseHeader(\"set-cookie\");\r",
+							"var OauthData = pm.response.json();\r",
+							"pm.test(\"response is ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"the code is 0\",function(){\r",
+							"\r",
+							"    pm.expect(OauthData.code).to.eql('0');\r",
+							"})\r",
+							"if(Setcookie){\r",
+							"    pm.test(\"cookie exist!\",function(){\r",
+							"        pm.response.to.have.header(\"set-cookie\");\r",
+							"    });\r",
+							"    pm.environment.set(\"CookieA\", postman.getResponseHeader(\"set-cookie\"));\r",
+							"}\r",
+							"pm.environment.set(\"state\", OauthData.state);\r",
+							"pm.environment.set(\"client_id\", OauthData.client_id);\r",
+							"pm.environment.set(\"redirect_uri\", OauthData.redirect_uri);\r",
+							"pm.environment.set(\"scope\", OauthData.scope);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4182987c-95f6-43b6-af39-3448ddc12dee",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://139.199.224.230:7002/user/get_oauth_data?from=mini",
+					"protocol": "http",
+					"host": [
+						"139",
+						"199",
+						"224",
+						"230"
+					],
+					"port": "7002",
+					"path": [
+						"user",
+						"get_oauth_data"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "mini"
+						}
+					]
+				},
+				"description": "查询认证配置"
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "48dc31e8-7347-4e9c-b31e-8d3e8e7d4329",
+						"exec": [
+							"let CookieB = pm.environment.get(\"CookieB\");\r",
+							"var OauthCode = pm.response.json();\r",
+							"let Setcookie = postman.getResponseHeader(\"set-cookie\");\r",
+							"pm.test(\"response is ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"the code is 0\",function(){\r",
+							"    pm.expect(OauthCode.code).to.eql('0');\r",
+							"})\r",
+							"if(Setcookie){\r",
+							"    pm.test(\"cookie exist!\",function(){\r",
+							"        pm.response.to.have.header(\"set-cookie\");\r",
+							"    });\r",
+							"    pm.environment.set(\"CookieB\", postman.getResponseHeader(\"set-cookie\"));\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "account",
+							"value": "17jhxu",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Jh1515451232",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://139.199.224.230:7001/oauth/login",
+					"protocol": "http",
+					"host": [
+						"139",
+						"199",
+						"224",
+						"230"
+					],
+					"port": "7001",
+					"path": [
+						"oauth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_authorize_code",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2516a535-041a-4bfd-a533-d7d01262d346",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e8b8eea4-c74f-4cbd-9446-04aceced7958",
+						"exec": [
+							"var authorizeData=pm.response.json();\r",
+							"pm.test(\"response is ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"the code is 0\",function(){\r",
+							"    pm.expect(authorizeData.code).to.eql('0');\r",
+							"})\r",
+							"pm.environment.set(\"authorization_code\", authorizeData.authorization_code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CookieB",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://139.199.224.230:7001/oauth/authorize?response_type=code&client_id={{client_id}}&scope={{scope}}&from=mini&state={{state}}",
+					"protocol": "http",
+					"host": [
+						"139",
+						"199",
+						"224",
+						"230"
+					],
+					"port": "7001",
+					"path": [
+						"oauth",
+						"authorize"
+					],
+					"query": [
+						{
+							"key": "response_type",
+							"value": "code"
+						},
+						{
+							"key": "client_id",
+							"value": "{{client_id}}"
+						},
+						{
+							"key": "scope",
+							"value": "{{scope}}"
+						},
+						{
+							"key": "from",
+							"value": "mini"
+						},
+						{
+							"key": "state",
+							"value": "{{state}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getSkey",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d669c1de-6f57-4d8d-a3cf-a7613bef3df6",
+						"exec": [
+							"var redirectData=pm.response.json();\r",
+							"pm.test(\"response is ok\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"the code is 0\",function(){\r",
+							"    pm.expect(redirectData.code).to.eql('0');\r",
+							"})\r",
+							"pm.test(\"skey exist\",function(){\r",
+							"     pm.expect(pm.response.text()).to.include(\"skey\");\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "CookieA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{redirect_uri}}?code={{authorization_code}}&state={{state}}&from=mini",
+					"host": [
+						"{{redirect_uri}}"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "{{authorization_code}}"
+						},
+						{
+							"key": "state",
+							"value": "{{state}}"
+						},
+						{
+							"key": "from",
+							"value": "mini"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
